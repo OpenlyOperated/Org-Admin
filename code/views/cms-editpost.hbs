@@ -1,0 +1,170 @@
+{{> header title="Edit Post" }}
+
+<body>
+  
+  {{> nav }}
+  
+  <div class="container-fluid mt-3">
+    
+    <div class="row">
+      <div class="col mt-2">
+  
+        <div class="row">
+          <div class="col">
+            <h5 class="mb-3 text-center">Edit Post</h5>
+            {{> flash }}
+          </div>
+        </div>
+        
+        <div class="form-group row">
+          <label for="postTitle" class="col-md-1 col-2 col-form-label">Title</label>
+          <div class="col-md-11 col-10">
+            <input type="text" class="form-control" id="postTitle" placeholder="Enter post title" value="{{ post.title }}">
+          </div>
+        </div>
+        
+        <div class="form-group row">
+          <label for="postAuthor" class="col-md-1 col-2 col-form-label">Author</label>
+          <div class="col-md-11 col-10">
+            <input type="text" class="form-control" id="postAuthor" placeholder="Enter post author" value="{{ post.author }}">
+          </div>
+        </div>
+        
+        <div class="form-group row">
+          <label for="postAlias" class="col-md-1 col-2 col-form-label">Alias</label>
+          <div class="col-md-11 col-10">
+            <input type="text" class="form-control" id="postAlias" placeholder="Enter post alias for linking (alphanumeric, dashes, underscores only)" value="{{ post.alias }}">
+          </div>
+        </div>
+        
+        <div class="form-group row">
+          <label for="postTags" class="col-md-1 col-2 col-form-label">Tags</label>
+          <div class="col-md-11 col-10">
+            <input type="text" class="form-control" id="postTags" placeholder="Enter post tags, separated by commas" value="{{ post.tagsList }}">
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="col-lg-6">
+            <textarea rows="15" oninput="updatePreview(this)" type="text" id="postBody" class="form-control" placeholder="Enter post body" style="height: 700px; overflow-y: scroll;">{{ post.body }}</textarea>
+          </div>
+          <div class="col-lg-6">
+            <div class="border rounded py-2 px-3" id="postPreview" style="height: 700px; overflow-y: scroll;">
+              <p class="text-muted">Preview will appear here</p>
+            </div>
+          </div>
+        </div>
+        
+      </div>      
+    </div>
+    
+    <div class="row">
+      <div class="col mb-5 mt-0 pt-3">
+        <button id="savePostButton" onclick="savePost();" class="btn btn-primary btn-lg float-left mr-2">Save Post</button>
+        <div class="btn-group btn-group-toggle float-left" id="publishedToggle" data-toggle="buttons">
+          {{#if post.published }}
+          <label class="btn btn-secondary active">
+            <input type="radio" name="options" id="publishedTrue" autocomplete="off" value="true" checked> Published
+          </label>
+          <label class="btn btn-secondary">
+            <input type="radio" name="options" id="publishedFalse" autocomplete="off" value="false"> Not Published
+          </label>
+          {{else}}
+          <label class="btn btn-secondary">
+            <input type="radio" name="options" id="publishedTrue" autocomplete="off" value="true"> Published
+          </label>
+          <label class="btn btn-secondary active">
+            <input type="radio" name="options" id="publishedFalse" autocomplete="off" value="false" checked> Not Published
+          </label>
+          {{/if}}
+        </div>
+        <button id="deletePostButton" onclick="deletePost();" class="btn btn-outline-danger btn-lg float-right ml-2">Delete Post</button>
+        <a href="/cms" class="btn btn-outline-danger btn-lg float-right mx-2">Discard Changes</a>
+      </div>
+    </div>
+    
+  </div>
+  
+  {{> footer}}
+
+  {{> bootstrapjs}}
+  
+  <script>
+    var mdAttrs = window.markdownItAttrs;
+    var mdContainer = window.markdownitContainer;
+    var md = window.markdownit()
+      .use(mdContainer, "div")
+      .use(mdAttrs);
+    
+    updatePreview(document.getElementById("postBody"));
+    
+    function updatePreview(textarea) {
+      var body = document.getElementById("postBody").value;
+      var bodyWithBucketUrls = body.replace(/\{{CMS_BUCKET_URL}}/g, "{{CMS_BUCKET_URL}}");
+      var result = md.render(bodyWithBucketUrls);
+      if (result.length == 0) {
+        result = '<p class="text-muted">Preview will appear here</p>';
+      }
+      document.getElementById("postPreview").innerHTML = result;
+      TyperSetup();
+    }
+    
+    function savePost() {
+      var published = $('#publishedToggle input:radio:checked').val();
+      document.getElementById("savePostButton").disabled = true;
+      var http = new XMLHttpRequest();
+      var url = "save-post";
+      http.open("POST", url, true);
+      var params = "title=" + encodeURIComponent(document.getElementById("postTitle").value)
+        + "&author=" + encodeURIComponent(document.getElementById("postAuthor").value)
+        + "&alias=" + encodeURIComponent(document.getElementById("postAlias").value).toLowerCase()
+        + "&body=" + encodeURIComponent(document.getElementById("postBody").value)
+        + "&tags=" + encodeURIComponent(document.getElementById("postTags").value)
+        + "&published=" + encodeURIComponent(published)
+        + "&id=" + encodeURIComponent("{{ post.id }}")
+      http.responseType = 'json';
+      http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      http.onreadystatechange = function() {
+        if (http.readyState == 4) {
+          if (http.status == 200) {
+            bootbox.alert("Post Saved");
+          }
+          else {
+            bootbox.alert("Error<br/>" + JSON.stringify(http.response, null, 2));
+          }
+          document.getElementById("savePostButton").disabled = false;
+        }
+      }
+      http.send(params);
+    }
+    
+    function deletePost() {
+      bootbox.confirm("Are you sure you want to delete this post? This cannot be undone.", function (result) {
+        if (result == true) {
+          document.getElementById("deletePostButton").disabled = true;
+          var http = new XMLHttpRequest();
+          var url = "delete-post";
+          http.open("POST", url, true);
+          var params = "id=" + encodeURIComponent("{{ post.id }}")
+          http.responseType = 'json';
+          http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+          http.onreadystatechange = function() {
+            if (http.readyState == 4) {
+              if (http.status == 200) {
+                bootbox.alert("Post Deleted", function() {
+                  window.location.href = "/cms";
+                });
+                return;
+              }
+              bootbox.alert("Error<br/>" + JSON.stringify(http.response, null, 2));
+              document.getElementById("deletePostButton").disabled = false;
+            }
+          }
+          http.send(params);
+        }
+      });
+    }
+    
+  </script>
+  
+</body>

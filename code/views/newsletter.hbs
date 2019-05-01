@@ -1,0 +1,35 @@
+{{> header title="Newsletter" }}
+
+<body>
+  
+  {{> nav }}
+  
+  <div class="container mt-3">
+
+    <div class="row">
+      <div class="col mt-1">
+        <a href="/admin" class="btn btn-primary btn-lg position-absolute">Back</a>
+        <h5 class="mb-2 mt-2 text-center">Newsletter</h5>
+      </div>
+    </div>
+
+    <div class="row">
+      
+      <div class="col-md-4 offset-md-4 mt-5 rounded shadow p-4 text-center">
+        <h5 class="mb-3">Subscriber Metrics</h5>
+        <strong>{{numberConfirmed}}</strong> Confirmed
+        <br/>
+        <strong>{{numberUnconfirmed}}</strong> Unconfirmed
+        <br/>
+        <strong>{{numberDoNotEmail}}</strong> Do Not Email
+      </div>
+      
+    </div>
+  
+  </div>
+  
+  {{> footer}}
+
+  {{> bootstrapjs}}
+  
+</body>

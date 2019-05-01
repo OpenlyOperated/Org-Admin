@@ -1,0 +1,58 @@
+{{> header title="Database" }}
+
+<body>
+  
+  {{> nav }}
+  
+  <div class="container mt-3">
+  
+    <div class="row">
+      <div class="col mt-1">
+        <a href="/admin" class="btn btn-primary btn-lg position-absolute">Back</a>
+        <h5 class="mb-2 mt-2 text-center">Database</h5>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="col-xl-10 offset-xl-1 mt-4 rounded shadow p-4">
+        
+        <h6>Postgres Console</h6>
+        
+        <input type="text" id="postgresCommand" class="form-control" placeholder="SELECT count(*) FROM ..."/>
+        <textarea rows="12" type="text" id="postgresResult" class="form-control mt-2" placeholder="Result will appear here."></textarea>
+        <button id="postgresCommandButton" onclick="postgresCommand();" class="btn btn-primary btn-lg btn-block mt-3">Submit</button>
+  
+      </div>
+    
+    </div>
+    
+  </div>
+  
+  <script>
+    
+    function postgresCommand() {
+      var http = new XMLHttpRequest();
+      var url = "postgres-command";
+      http.open("POST", url, true);
+      var params = "command=" + encodeURIComponent(document.getElementById("postgresCommand").value);
+      http.responseType = 'json';
+      http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      http.onreadystatechange = function() {
+        if (http.readyState == 4) {
+          if (http.status == 200) {
+            document.getElementById("postgresResult").value = http.response.message;
+            return;
+          }
+          bootbox.alert("Error: " + JSON.stringify(http.response));
+        }
+      }
+      http.send(params);
+    }
+    
+  </script>
+  
+  {{> footer}}
+
+  {{> bootstrapjs}}
+  
+</body>

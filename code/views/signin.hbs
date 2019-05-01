@@ -1,0 +1,34 @@
+{{> header title="Sign In" }}
+
+<body>
+  
+  {{> nav-loggedout }}
+  
+  <div class="container mt-5">
+    
+    <div class="row">
+      <div class="col-xl-4 offset-xl-4 col-md-6 offset-md-3 col-sm-8 offset-sm-2 mt-5 shadow-lg rounded py-4 px-4">
+        
+        <h6 class="mb-3 text-center">Admin Sign In</h6>
+        {{> flash }}
+        
+        <form class="form-signin" action="/signin" method="POST">
+          <label for="email" class="sr-only">Email address</label>
+          <input type="email" id="email" name="email" class="form-control mt-2" style="border-bottom-left-radius: 0px; border-bottom-right-radius: 0px; border-bottom: 0px;" placeholder="Email address" required autofocus>
+          <label for="password" class="sr-only">Password</label>
+          <input type="password" id="password" name="password" style="border-top-left-radius: 0px; border-top-right-radius: 0px;" class="form-control" placeholder="Password" required>
+          <button id="signinButton" type="submit" class="btn btn-primary btn-lg btn-block mt-3">Sign In</button>
+        </form>
+        <a href="/signup" class="btn btn-outline-primary btn-lg btn-block mt-2">New Account</a>
+        
+      </div>
+      
+    </div>
+    
+  </div>
+  
+  {{> footer}}
+
+  {{> bootstrapjs}}
+  
+</body>

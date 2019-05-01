@@ -1,0 +1,37 @@
+{{> header title="Admin" }}
+
+<body>
+  
+  {{> nav }}
+  
+  <div class="container mt-3">
+
+    <div class="row">
+      
+      <div class="col col-md-4 offset-md-4 mt-4 rounded shadow p-4">
+        
+        <h5 class="mb-3 text-center">Dashboard</h5>
+        {{> flash }}
+        <a href="/newsletter" class="btn btn-primary btn-lg btn-block">Newsletter</a>
+        <a href="/database" class="btn btn-primary btn-lg btn-block">Database</a>
+        <a href="/cms" class="btn btn-primary btn-lg btn-block">CMS</a>
+        <a href="/cms-files" class="btn btn-primary btn-lg btn-block">CMS Files</a>
+        
+      </div>
+      
+    </div>
+  
+    <div class="row">
+      <div class="col col-md-4 offset-md-4 mt-5 rounded shadow p-4">
+        <h5 class="mb-3 text-center">Account</h5>
+        <a href="/change-password" class="btn btn-primary btn-lg btn-block">Change Password</a>
+      </div>
+    </div>
+    
+  </div>
+  
+  {{> footer}}
+
+  {{> bootstrapjs}}
+  
+</body>

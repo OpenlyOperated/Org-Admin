@@ -1,0 +1,120 @@
+{{> header title="CMS" }}
+
+<body>
+  
+  {{> nav }}
+  
+  <div class="container-fluid mt-3">
+  
+    <div class="row">
+      <div class="col mt-1">
+        <a href="/admin" class="btn btn-primary btn-lg position-absolute">Back</a>
+        <h5 class="mb-2 mt-2 text-center">Content Management System</h5>
+        {{> flash }}
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="col mb-4 mx-4 mt-3 rounded shadow px-3 py-2">
+        {{#if tagTitle}}
+          <h5 class="text-center font-weight-normal">Showing Posts Tagged "<strong>{{tagTitle}}</strong>"
+            <br/>
+            <a href="/cms" class="mt-2 mb-1 btn btn-primary btn-lg">Show All Posts</a>
+          </h5>
+        {{/if}}
+        
+        {{#if posts}}
+        <table class="table table-hover small">
+          <thead>
+            <tr>
+              <th scope="col" class="border-top-0">ID</th>
+              <th scope="col" class="border-top-0">Published</th>
+              <th scope="col" class="border-top-0">Title</th>
+              <th scope="col" class="border-top-0">Author</th>
+              <th scope="col" class="border-top-0">Tags</th>
+              <th scope="col" class="border-top-0">Created</th>
+              <th scope="col" class="border-top-0">Updated</th>
+              <th scope="col" class="border-top-0">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each posts}}
+            <tr>
+              <td>{{this.id}}</td>
+              <td>{{this.published}}</td>
+              <td class="text-nowrap text-truncate" style="max-width: 300px;">{{this.title}}</td>
+              <td>{{this.author}}</td>
+              <td>
+                {{#each this.tags}}
+                  <a href="/cms?tagTitle={{this.title}}" class="mx-1">{{this.title}}</a>
+                {{/each}}
+              </td>
+              <td>{{this.createDateFriendly}}</td>
+              <td>{{this.updateDateFriendly}}</td>
+              <td>
+                <a href="/edit-post?id={{this.id}}" class="btn btn-primary btn-sm mb-1">Edit</a>
+                <button id="sendPostToNewsletterButton" onclick="sendPostTo({{this.id}}, 'newsletter', this);" class="btn btn-primary btn-sm mb-1">Send To Newsletter</button>
+                <button id="sendPostToAdminButton" onclick="sendPostTo({{this.id}}, 'admin', this);" class="btn btn-primary btn-sm mb-1">Send To Admin</button>
+              </td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+        {{else}}
+          <h6 class="text-center text-muted">No posts found.</h6>
+        {{/if}}
+        
+        <div class="row">
+          <div class="col text-center mt-0 mb-3">
+            <a href="/new-post" class="btn btn-primary btn-lg">New Post</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+  
+  {{> footer}}
+
+  {{> bootstrapjs}}
+  
+  <script>
+    
+    function sendPostTo(id, target, button) {
+      bootbox.prompt("Are you sure you want to send this post to '" + target + "'? Type 'confirm' below to confirm.", function(result){
+        if (result === "confirm") {
+          var published = $('#publishedToggle input:radio:checked').val();
+          button.disabled = true;
+          button.value = "Sending...";
+          var http = new XMLHttpRequest();
+          var url = "send-post";
+          http.open("POST", url, true);
+          var params = "id=" + id
+            + "&target=" + target;
+          http.responseType = 'json';
+          http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+          http.onreadystatechange = function() {
+            if (http.readyState == 4) {
+              if (http.status == 200) {
+                bootbox.alert("Post sent successfully. Check logs for any errors.", function() {
+                  button.value = "Sent";
+                });
+                return;
+              }
+              else {
+                bootbox.alert("Error<br/>" + JSON.stringify(http.response, null, 2));
+              }
+              button.disabled = false;
+            }
+          }
+          http.send(params);
+        }
+        else {
+          bootbox.alert("Post sending cancelled.");
+        }
+      });
+    }
+  
+  </script>
+   
+</body>

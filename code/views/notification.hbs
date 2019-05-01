@@ -1,0 +1,23 @@
+{{> header title="Notification" }}
+
+<body>
+  
+  {{> nav-loggedout }}
+  
+  <div class="container mt-5">
+    
+    <div class="row">
+      <div class="col-xl-4 offset-xl-4 col-md-6 offset-md-3 col-sm-8 offset-sm-2 mt-3 rounded shadow-lg p-4">
+        <h5 class="mb-3 text-center">Notification</h5>
+        {{> flash }}
+        <a href="/admin" id="backButton" class="btn btn-primary btn-lg btn-block mt-3">Back</a>
+      </div>
+    </div>
+    
+  </div>
+  
+  {{> footer}}
+
+  {{> bootstrapjs}}
+  
+</body>
