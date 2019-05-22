@@ -16,7 +16,7 @@ const CMS_BUCKET_URL = "https://" + CMS_BUCKET + ".s3.amazonaws.com";
 const express = require("express");
 const app = express();
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true, limit: "5mb" }));
 
 // Email for /signin alerts
 const { Email } = require("shared/utilities");
