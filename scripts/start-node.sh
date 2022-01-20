@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 export NODE_ENV=production
 
 cd /home/node/admin
