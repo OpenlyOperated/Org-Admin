@@ -4,7 +4,7 @@ chai.use(require("chai-http"));
 const server = require("../app");
 const should = require("chai").should();
 
-describe("Basic", () => {
+describe.skip("Basic", () => {
   
   describe("Health Check", () => {
     it("should respond 200 and JSON OK", (done) => {
